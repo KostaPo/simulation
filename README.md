@@ -11,5 +11,5 @@
 <h1>Запуск приложения:</h1>
 <ul>
  <li>Перейдите в папку target</li>
- <li>Запустите программу командой: java -jar simulation.jar</li>
+ <li>Запустите программу командой: java -jar simulation-2.0.jar</li>
 </ul>
