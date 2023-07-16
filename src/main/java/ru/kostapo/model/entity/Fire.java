@@ -2,32 +2,37 @@ package ru.kostapo.model.entity;
 
 import ru.kostapo.model.common.Coordinates;
 
-import java.awt.*;
+import javax.imageio.ImageIO;
+import javax.swing.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-import java.util.List;
 
 public class Fire extends AnimatedEntity {
-    private final static int SPRITE_SIZE = 96;
-    private final List<Image> animationImgList;
-    private int animationIndex;
+
+    private final int SPRITE_SIZE = 96;
+
     public Fire (int mapScale, Coordinates coordinates) {
         death = false;
         scale = mapScale;
         boardPoint = coordinates;
-        spriteCoordinates = new Coordinates(boardPoint.getX()*scale, boardPoint.getY()*scale);
+        spriteCoordinates = new Coordinates(
+                boardPoint.getX()*scale,
+                boardPoint.getY()*scale);
         animationImgList = new ArrayList<>();
+        initAnimationSprites();
     }
     @Override
-    public void initAnimationSprites(BufferedImage spriteSheet) {
+    public void initAnimationSprites() {
+        BufferedImage spriteSheet = getImageAsset();
         int width_counter = spriteSheet.getTileWidth() / SPRITE_SIZE;
         int height_counter = spriteSheet.getTileHeight() / SPRITE_SIZE;
         for (int i = 0; i < width_counter; i++) {
+            animationImgList.add(new ArrayList<>());
             for (int j = 0; j < height_counter; j++) {
-                animationImgList.add(spriteSheet.getSubimage(i * SPRITE_SIZE, j * SPRITE_SIZE, SPRITE_SIZE, SPRITE_SIZE));
+                animationImgList.get(0).add(spriteSheet.getSubimage(i * SPRITE_SIZE, j * SPRITE_SIZE, SPRITE_SIZE, SPRITE_SIZE));
             }
         }
-        animationImgList.remove(animationImgList.size()-1);
+        animationImgList.get(0).remove(animationImgList.size()-1);
     }
 
     @Override
@@ -36,10 +41,14 @@ public class Fire extends AnimatedEntity {
     }
 
     @Override
-    public void updateAnimation() {
-        animationIndex++;
-        if(animationIndex > animationImgList.size()-1)
-            animationIndex = 0;
-        this.sprite = animationImgList.get(animationIndex);
+    public BufferedImage getImageAsset() {
+        BufferedImage asset = null;
+        try {
+            asset = ImageIO.read(getClass().getResourceAsStream("/entity/fire_sprite.png"));
+        }  catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "can't load fire spritesheet");
+            e.printStackTrace();
+        }
+        return asset;
     }
 }

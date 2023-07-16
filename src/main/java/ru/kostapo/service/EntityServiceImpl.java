@@ -7,7 +7,9 @@ import ru.kostapo.model.entity.Entity;
 
 import java.util.*;
 public class EntityServiceImpl implements EntityService {
+
     private final WorldMap worldMap;
+
     public EntityServiceImpl(WorldMap worldMap) {
         this.worldMap = worldMap;
     }
@@ -28,6 +30,7 @@ public class EntityServiceImpl implements EntityService {
         });
         return targetsList;
     }
+
     @Override
     public <T extends Entity> LinkedList<Coordinates> findPath(Coordinates startPoint, T target) {
         PriorityQueue<Node> openList = new PriorityQueue<>();
@@ -55,11 +58,13 @@ public class EntityServiceImpl implements EntityService {
         }
         return null;
     }
+
     private  <T> boolean isStepOrTarget(Coordinates stepPoint, Class<T> targetType) {
         if(!worldMap.isEmpty(stepPoint))
             return targetType.isInstance(worldMap.getEntity(stepPoint));
         return true;
     }
+
     private LinkedList<Coordinates> getPathFromResultNode(Node targetNode) {
         Node node = targetNode;
         LinkedList<Coordinates> coordinates = new LinkedList<>();
@@ -70,12 +75,14 @@ public class EntityServiceImpl implements EntityService {
         Collections.reverse(coordinates);
         return coordinates;
     }
+
     @Override
     public <T extends Entity> boolean isTargetOnPoint(T target) {
         if(!worldMap.isEmpty(target.getBoardPoint()))
             return worldMap.getEntity(target.getBoardPoint()) == target;
         return false;
     }
+
     @Override
     public int getDistanceToTarget(Coordinates current, Coordinates target) {
         return Math.abs(current.getX() - target.getX()) +
@@ -92,6 +99,7 @@ public class EntityServiceImpl implements EntityService {
         worldMap.removeEntity(entity.getBoardPoint());
         worldMap.addEntity(newBoardPoint, entity);
     }
+
     @Override
     public void attackTarget(Entity target, int attackPower) {
         target.attacked(attackPower);

@@ -2,18 +2,20 @@ package ru.kostapo.model.entity;
 
 import ru.kostapo.model.common.Coordinates;
 import ru.kostapo.model.enums.EntityType;
-import ru.kostapo.service.EntityService;
+
+import javax.imageio.ImageIO;
+import javax.swing.*;
 
 import java.awt.image.BufferedImage;
 
 import static ru.kostapo.Config.GRASS_HP;
 
 public class Grass extends Entity {
-    private final EntityService service;
-    public Grass (int mapScale, Coordinates coordinates, EntityService eService) {
+
+    public Grass (int mapScale, Coordinates coordinates) {
+        sprite = getImageAsset();
         death = false;
         hp = GRASS_HP;
-        service = eService;
         scale = mapScale;
         boardPoint = coordinates;
         spriteCoordinates = new Coordinates(
@@ -21,9 +23,19 @@ public class Grass extends Entity {
                 boardPoint.getY()*scale
         );
     }
-    public void initSprite(BufferedImage sprite) {
-        this.sprite = sprite;
+
+    @Override
+    public BufferedImage getImageAsset() {
+        BufferedImage asset = null;
+        try {
+            asset = ImageIO.read(getClass().getResourceAsStream("/entity/grass_sprite.png"));
+        }  catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "can't load grass spritesheet");
+            e.printStackTrace();
+        }
+        return asset;
     }
+
     @Override
     public void attacked(int attackPower) {
         hp-=attackPower;
@@ -31,6 +43,7 @@ public class Grass extends Entity {
             death = true;
         }
     }
+
     @Override
     public EntityType getType() {
         return EntityType.STATIC;
